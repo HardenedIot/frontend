@@ -61,6 +61,7 @@ export default function Navigation() {
 
   const menuItems = [
     { text: "Dashboard", icon: <DashboardIcon />, href: "/dashboard" },
+    { text: "Users", icon: <PersonIcon />, href: "/users" },
     { text: "Teams", icon: <GroupIcon />, href: "/teams" },
     { text: "Projects", icon: <FolderIcon />, href: "/projects" },
     { text: "Profile", icon: <PersonIcon />, href: "/profile" },

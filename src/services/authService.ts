@@ -3,8 +3,7 @@ import type { User } from "../types";
 const TOKEN_KEY = "auth_token";
 const USER_KEY = "current_user";
 
-// const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
-let backendUrl = "http://localhost:3002"
+let backendUrl = "http://localhost:3002";
 
 export const login = async (email: string, password: string): Promise<User> => {
   const response = await fetch(`${backendUrl}/auth/login`, {
@@ -48,11 +47,16 @@ export const logout = (): void => {
 
 export const getCurrentUser = async (): Promise<User> => {
   const token = localStorage.getItem(TOKEN_KEY);
-  if (!token) {
+  const currentUser = localStorage.getItem(USER_KEY);
+
+  if (!token || !currentUser) {
     throw new Error("Not authenticated");
   }
 
-  const response = await fetch(`${backendUrl}/users/me`, {
+  const user = JSON.parse(currentUser);
+  const username = user.username;
+
+  const response = await fetch(`${backendUrl}/users/${username}`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -62,8 +66,8 @@ export const getCurrentUser = async (): Promise<User> => {
     throw new Error("Failed to fetch user");
   }
 
-  const user = await response.json();
-  return user;
+  const fetchedUser = await response.json();
+  return fetchedUser;
 };
 
 export const isAuthenticated = (): boolean => {
