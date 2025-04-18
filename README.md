@@ -7,8 +7,11 @@
 Язык программирования: JavaScript (TypeScript)
 
 Фреймворки и библиотеки:
-
--
+- Next.js
+- React
+- Material-UI
+- Radix UI components
+- Tailwind CSS
 
 ## Развертывание приложения
 
