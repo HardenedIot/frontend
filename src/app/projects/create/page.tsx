@@ -20,17 +20,28 @@ import {
   Select,
   MenuItem,
   CircularProgress,
+  Checkbox,
+  FormGroup
 } from "@mui/material"
 import type { Team } from "@/types"
 import Link from "next/link"
 
+const availableTechnologies = [
+  "wifi", "uart", "jtag", "bluetooth", "lte", "rfid", "nfc",
+  "ant+", "lifi", "zigbee", "z-wave", "lte-advanced", "lora",
+  "nb-iot", "sigfox", "nb-fi", "http", "https", "coap",
+  "mqtt", "amqp", "xmpp"
+];
+
 export default function CreateProject() {
   const [formData, setFormData] = useState({
+    project_id: "",
     project_name: "",
     team_id: "",
     description: "",
     url: "",
     private: false,
+    technologies: []
   })
   const [teams, setTeams] = useState<Team[]>([])
   const [errors, setErrors] = useState<Record<string, string>>({})
@@ -68,6 +79,16 @@ export default function CreateProject() {
       [name as string]: type === "checkbox" ? checked : value,
     })
   }
+
+  const handleTechnologyChange = (event) => {
+    const { value, checked } = event.target;
+    setFormData((prev) => {
+      const technologies = checked
+        ? [...prev.technologies, value]
+        : prev.technologies.filter((tech) => tech !== value);
+      return { ...prev, technologies };
+    });
+  };
 
   const validate = () => {
     const newErrors: Record<string, string> = {}
@@ -115,6 +136,9 @@ export default function CreateProject() {
         </Typography>
 
         <Box component="form" onSubmit={handleSubmit} sx={{ mt: 3 }}>
+
+
+
           <TextField
             fullWidth
             required
@@ -124,6 +148,18 @@ export default function CreateProject() {
             onChange={handleChange}
             error={!!errors.project_name}
             helperText={errors.project_name}
+            margin="normal"
+          />
+
+          <TextField
+            fullWidth
+            required
+            label="Project ID"
+            name="project_id"
+            value={formData.project_id}
+            onChange={handleChange}
+            error={!!errors.project_id}
+            helperText={errors.project_id}
             margin="normal"
           />
 
@@ -184,6 +220,25 @@ export default function CreateProject() {
             label="Make project private"
             sx={{ mt: 2 }}
           />
+
+          <Typography variant="h6" component="h2" gutterBottom>
+            Select Technologies
+          </Typography>
+          <FormGroup>
+            {availableTechnologies.map((tech) => (
+              <FormControlLabel
+                key={tech}
+                control={
+                  <Checkbox
+                    checked={formData.technologies.includes(tech)}
+                    onChange={handleTechnologyChange}
+                    value={tech}
+                  />
+                }
+                label={tech}
+              />
+            ))}
+          </FormGroup>
 
           <Box sx={{ mt: 4, display: "flex", justifyContent: "space-between" }}>
             <Link href="/projects" passHref>
