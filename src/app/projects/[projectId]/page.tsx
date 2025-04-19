@@ -128,54 +128,57 @@ export default function ProjectDetails() {
 
   const handleTaskStatusChange = async (taskId: string, status: "completed" | "ignored", value: boolean) => {
     try {
-      const updatedTask = tasks.find((task) => task.task_id === taskId)
-      if (!updatedTask) return
+      const updatedTask = tasks.find((task) => task.task_id === taskId);
+      if (!updatedTask) return;
 
       const taskUpdate = {
         ...updatedTask,
         [status]: value,
-      }
+      };
 
+      // Ensure that if a task is marked as completed, it cannot be ignored
       if (status === "completed" && value) {
-        taskUpdate.ignored = false
+        taskUpdate.ignored = false;
       }
 
+      // Ensure that if a task is marked as ignored, it cannot be completed
       if (status === "ignored" && value) {
-        taskUpdate.completed = false
+        taskUpdate.completed = false;
       }
 
-      await updateTask(projectId, taskUpdate)
+      await updateTask(projectId, taskUpdate);
 
-      setTasks(tasks.map((task) => (task.task_id === taskId ? taskUpdate : task)))
+      // Update the local state with the modified task
+      setTasks(tasks.map((task) => (task.task_id === taskId ? taskUpdate : task)));
 
-      showSnackbar(`Task ${value ? status : "updated"}`, "success")
+      showSnackbar(`Task ${value ? status : "updated"}`, "success");
     } catch (error) {
-      showSnackbar("Failed to update task", "error")
+      showSnackbar("Failed to update task", "error");
     }
-  }
+  };
 
   const handleFilterChange = (filterType: "technology" | "status" | "risk", event: SelectChangeEvent) => {
-    const value = event.target.value
+    const value = event.target.value;
 
     switch (filterType) {
       case "technology":
-        setTechnologyFilter(value)
-        break
+        setTechnologyFilter(value);
+        break;
       case "status":
-        setStatusFilter(value)
-        break
+        setStatusFilter(value);
+        break;
       case "risk":
-        setRiskFilter(value)
-        break
+        setRiskFilter(value);
+        break;
     }
-  }
+  };
 
   if (loading) {
     return (
       <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "80vh" }}>
         <CircularProgress />
       </Box>
-    )
+    );
   }
 
   if (!project) {
@@ -188,10 +191,10 @@ export default function ProjectDetails() {
           Back to Projects
         </Button>
       </Box>
-    )
+    );
   }
 
-  const technologies = Array.from(new Set(tasks.map((task) => task.technology)))
+  const technologies = Array.from(new Set(tasks.map((task) => task.technology)));
 
   return (
     <Box sx={{ maxWidth: 1200, mx: "auto", py: 4 }}>
@@ -414,5 +417,5 @@ export default function ProjectDetails() {
         </DialogActions>
       </Dialog>
     </Box>
-  )
+  );
 }

@@ -60,7 +60,7 @@ export default function CreateTeam() {
       setLoading(true)
       await createTeam(formData)
       showSnackbar("Team created successfully!", "success")
-      router.push("/teams")
+      router.push("/dashboard")
     } catch (error) {
       showSnackbar("Failed to create team. Please try again.", "error")
     } finally {

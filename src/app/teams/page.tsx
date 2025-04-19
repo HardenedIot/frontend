@@ -36,66 +36,62 @@ import {
 } from "@mui/icons-material"
 import type { Team, Project, User } from "@/types"
 import Link from "next/link"
+import { useParams } from "next/navigation"
 
-export default function TeamDetails({ params }: { params: Promise<{ teamId: string }> }) {
-  const [teamId, setTeamId] = useState<string | null>(null);
-  const [team, setTeam] = useState<Team | null>(null);
-  const [projects, setProjects] = useState<Project[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [deleteLoading, setDeleteLoading] = useState(false);
-  const { showSnackbar } = useSnackbar();
-  const router = useRouter();
-
-  useEffect(() => {
-    const loadParams = async () => {
-      const resolvedParams = await params;
-      setTeamId(resolvedParams.teamId);
-    };
-
-    loadParams();
-  }, [params]);
+export default function TeamDetails() {
+  const params = useParams()
+  const teamId = params.teamId as string
+  const [team, setTeam] = useState<Team | null>(null)
+  const [projects, setProjects] = useState<Project[]>([])
+  const [loading, setLoading] = useState(true)
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+  const [deleteLoading, setDeleteLoading] = useState(false)
+  const { showSnackbar } = useSnackbar()
+  const router = useRouter()
 
   useEffect(() => {
-    if (!teamId) return;
+    if (!teamId) return
 
     const loadData = async () => {
       try {
-        setLoading(true);
-        const [teamData, projectsData] = await Promise.all([fetchTeam(teamId), fetchTeamProjects(teamId)]);
-        setTeam(teamData);
-        setProjects(projectsData);
+        setLoading(true)
+        const [teamData, projectsData] = await Promise.all([
+          fetchTeam(teamId),
+          fetchTeamProjects(teamId),
+        ])
+        setTeam(teamData)
+        setProjects(projectsData)
       } catch (error) {
-        showSnackbar("Failed to load team details", "error");
-        router.push("/teams");
+        showSnackbar("Failed to load team details", "error")
+        router.push("/teams")
       } finally {
-        setLoading(false);
+        setLoading(false)
       }
-    };
+    }
 
-    loadData();
-  }, [teamId, showSnackbar, router]);
+    loadData()
+  }, [teamId, showSnackbar, router])
 
   const handleDeleteTeam = async () => {
     try {
-      setDeleteLoading(true);
-      await deleteTeam(teamId!);
-      showSnackbar("Team deleted successfully", "success");
-      router.push("/teams");
+      setDeleteLoading(true)
+      await deleteTeam(teamId)
+      showSnackbar("Team deleted successfully", "success")
+      router.push("/teams")
     } catch (error) {
-      showSnackbar("Failed to delete team", "error");
+      showSnackbar("Failed to delete team", "error")
     } finally {
-      setDeleteLoading(false);
-      setDeleteDialogOpen(false);
+      setDeleteLoading(false)
+      setDeleteDialogOpen(false)
     }
-  };
+  }
 
   if (loading) {
     return (
       <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "80vh" }}>
         <CircularProgress />
       </Box>
-    );
+    )
   }
 
   if (!team) {
@@ -108,7 +104,7 @@ export default function TeamDetails({ params }: { params: Promise<{ teamId: stri
           Back to Teams
         </Button>
       </Box>
-    );
+    )
   }
 
   return (
@@ -157,7 +153,7 @@ export default function TeamDetails({ params }: { params: Promise<{ teamId: stri
       </Paper>
 
       <Grid container spacing={4}>
-        <Grid>
+        <Grid item xs={12}>
           <Box sx={{ mb: 3, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
             <Typography variant="h5" component="h2">
               Projects
@@ -181,7 +177,7 @@ export default function TeamDetails({ params }: { params: Promise<{ teamId: stri
           ) : (
             <Grid container spacing={2}>
               {projects.map((project) => (
-                <Grid key={project.project_id}>
+                <Grid item key={project.project_id} xs={12} sm={6} md={4}>
                   <Card>
                     <CardContent>
                       <Typography variant="h6" component="h3" gutterBottom>
@@ -214,7 +210,7 @@ export default function TeamDetails({ params }: { params: Promise<{ teamId: stri
           )}
         </Grid>
 
-        <Grid>
+        <Grid item xs={12}>
           <Typography variant="h5" component="h2" sx={{ mb: 3 }}>
             Team Members
           </Typography>
@@ -279,5 +275,5 @@ export default function TeamDetails({ params }: { params: Promise<{ teamId: stri
         </DialogActions>
       </Dialog>
     </Box>
-  );
+  )
 }

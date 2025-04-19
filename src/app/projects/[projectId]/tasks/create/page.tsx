@@ -67,7 +67,7 @@ export default function CreateTask({ params }: { params: { projectId: string } }
     const newErrors: Record<string, string> = {}
 
     if (!formData.task_id) {
-      newErrors.task_id = "Task ID is required" // Validate task_id
+      newErrors.task_id = "Task ID is required"
     }
 
     if (!formData.name) {
