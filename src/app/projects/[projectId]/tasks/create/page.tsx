@@ -1,7 +1,6 @@
 "use client"
 
 import type React from "react"
-
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { useSnackbar } from "@/hooks/useSnackbar"
@@ -26,6 +25,7 @@ import Link from "next/link"
 export default function CreateTask({ params }: { params: { projectId: string } }) {
   const { projectId } = params
   const [formData, setFormData] = useState({
+    task_id: "",
     name: "",
     description: "",
     technology: "" as Technology,
@@ -65,6 +65,10 @@ export default function CreateTask({ params }: { params: { projectId: string } }
 
   const validate = () => {
     const newErrors: Record<string, string> = {}
+
+    if (!formData.task_id) {
+      newErrors.task_id = "Task ID is required" // Validate task_id
+    }
 
     if (!formData.name) {
       newErrors.name = "Task name is required"
@@ -142,6 +146,18 @@ export default function CreateTask({ params }: { params: { projectId: string } }
         </Typography>
 
         <Box component="form" onSubmit={handleSubmit} sx={{ mt: 3 }}>
+          <TextField
+            fullWidth
+            required
+            label="Task ID (only numbers)"
+            name="task_id"
+            value={formData.task_id}
+            onChange={handleChange}
+            error={!!errors.task_id}
+            helperText={errors.task_id}
+            margin="normal"
+          />
+
           <TextField
             fullWidth
             required
