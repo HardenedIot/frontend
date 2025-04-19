@@ -2,14 +2,15 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useSnackbar } from "../../hooks/useSnackbar";
-import { fetchTeam, updateTeam } from "../../services/teamService";
+import { useSnackbar } from "../../../../hooks/useSnackbar";
+import { fetchTeam, updateTeam } from "../../../../services/teamService";
 import {
   Box,
   Button,
   TextField,
   Typography,
   CircularProgress,
+  FormHelperText,
 } from "@mui/material";
 
 export default function EditTeam({ params }: { params: Promise<{ teamId: string }> }) {
@@ -17,6 +18,7 @@ export default function EditTeam({ params }: { params: Promise<{ teamId: string 
   const [team, setTeam] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState(false);
+  const [errors, setErrors] = useState<{ team_name?: string }>({});
   const { showSnackbar } = useSnackbar();
   const router = useRouter();
 
@@ -47,8 +49,20 @@ export default function EditTeam({ params }: { params: Promise<{ teamId: string 
     loadData();
   }, [teamId, showSnackbar, router]);
 
+  const validate = () => {
+    const newErrors: { team_name?: string } = {};
+    if (!team?.team_name || team.team_name.trim().length < 3) {
+      newErrors.team_name = "Team name must be at least 3 characters long";
+    }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleUpdateTeam = async (event: React.FormEvent) => {
     event.preventDefault();
+    if (!validate()) {
+      return;
+    }
     setUpdating(true);
     try {
       await updateTeam(teamId!, team);
@@ -74,7 +88,7 @@ export default function EditTeam({ params }: { params: Promise<{ teamId: string 
       <Typography variant="h4" component="h1" gutterBottom>
         Edit Team
       </Typography>
-      <form onSubmit={handleUpdateTeam}>
+      <form onSubmit={handleUpdateTeam} noValidate>
         <TextField
           label="Team Name"
           value={team.team_name || ""}
@@ -82,6 +96,8 @@ export default function EditTeam({ params }: { params: Promise<{ teamId: string 
           fullWidth
           required
           margin="normal"
+          error={Boolean(errors.team_name)}
+          helperText={errors.team_name}
         />
         <TextField
           label="Description"

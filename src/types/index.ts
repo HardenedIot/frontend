@@ -1,18 +1,18 @@
-export interface User {
-  id: number
-  username: string
-  name: string
-  surname: string
-  email: string
-  private: boolean
-  teams: Team[]
+export interface Team {
+  id: number;
+  team_id: string;
+  team_name: string;
+  description?: string;
+  private?: boolean;
+  users?: User[];
 }
 
-export interface Team {
-  id: number
-  team_name: string
-  team_id: string
-  description: string
+export interface User {
+  id: number;
+  name: string;
+  surname: string;
+  username: string;
+  email: string;
   users: User[]
   private: boolean
 }
