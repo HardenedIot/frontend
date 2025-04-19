@@ -1,0 +1,16 @@
+name: hiot_devcontainers
+
+services:
+  devcontainer_frontend:
+    container_name: hiot_devcontainer_frontend
+    image: mcr.microsoft.com/devcontainers/typescript-node
+    command: sleep infinity
+    env_file:
+      - .env
+    volumes:
+      - ..:/workspaces:cached
+    networks:
+      - main
+
+networks:
+  main:
